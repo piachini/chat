@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Chat WebSocket</title>
+</head>
+<body>
+    <h1>Chat</h1>
+    <input type="text" id="user" placeholder="Inserisci utente">
+    <br><br>
+    <input type="text" id="message" placeholder="Inserisci messaggio">
+    <button onclick="sendMessage()">Invia</button>
+    <ul id="messages"></ul>
+
+    <script>
+        const user = document.getElementById('user');
+        const socket = new WebSocket('ws://10.12.1.37:8080');
+
+        socket.onopen = () => {
+            console.log('Connessione stabilita');
+        };
+
+        socket.onmessage = (event) => {
+            const message = JSON.parse(event.data);
+            const listItem = document.createElement('li');
+            listItem.textContent = `${message.username}: ${message.message}`;
+            messages.appendChild(listItem);
+        };
+
+        function sendMessage() {
+            const user = document.getElementById('user');
+            const messageInput = document.getElementById('message');
+            const message = messageInput.value;
+            if (message) {
+                socket.send(JSON.stringify({
+                    username: 'Utente ' + user.value,
+                    message
+                }));
+                messageInput.value = '';
+            }
+        }
+    </script>
+</body>
+</html>
